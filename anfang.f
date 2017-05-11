@@ -59,7 +59,7 @@
       ! good for paper 2 dimensional
       write(6,*) 'dimensionless xlength=',75*dk1/(dke0*Diffgamma)**0.5
       write(6,*) 'dimensionless ylength=',2*dk1/(dke0*Diffgamma)**0.5
-      dx=75.d0/Nx*dk1/(dke0*Diffgamma)**0.5
+      dx=25.d0/Nx*dk1/(dke0*Diffgamma)**0.5
       dy=2.d0/Ny*dk1/(dke0*Diffgamma)**0.5
       write(6,*) 'Qqqqqqqqqq',(dke0*Diffgamma)**0.5/dk1
 !      write(6,*) 'dimensionless xlength=',75*dk1/(dke0*Diffgamma)**0.5

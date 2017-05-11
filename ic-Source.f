@@ -28,16 +28,9 @@
       do i=1,Nx
        do j=1,Ny
 
-!        if (i .lt. 1510 .and. i .gt. 1500) then
        if (i .lt. 110 .and. i .gt. 100) then
-        ro(i,j)=ro0(1)
-        if (j .lt. 50 .and. j .gt. 30) then
+            ro(i,j)=ro0(1)
             gamma(i,j)=gamma0(1)+100*gamma0(1)
-        else
-            gamma(i,j)=gamma0(1)
-        endif
-!        gamma(i,j)=gamma0(1)
-
        elseif(i .le. 100) then
         ro(i,j)=0
         gamma(i,j)=0
@@ -101,8 +94,6 @@
                wmax(i)  = w
             endif
 
-           write(12,*) dknum,w,freq
-
          enddo
       close(12)
 
@@ -140,17 +131,9 @@
       write(6,*) '********kmax=',dkmaximum
 
       write(6,*) '-----------------------------------------------------'
-      do k = 1,20000
-            dknum = 1.d-3*(k-1)
-            if (dknum .lt. dkmaximum) then
 
-       vdthreshold=((-Delta/a22+depsilon*dknum**2)*
-     .(depsilon*dknum**2-SS)**2/(dknum**2*(a11-depsilon*dknum**2)))**0.5
-            write(14,*) dknum,vdthreshold
-            endif
-      enddo
       endif
-      close(14)
+
 
       enddo
       call SteadyKc(a11,a22,SS,Delta,dkc0,n)
@@ -162,11 +145,6 @@
      . ,a22/(a11+a22-depsilon*dkc0(2)**2)
       write(6,*) 'epsilon*kc**2=',depsilon*dkc0(1)**2,
      . depsilon*dkc0(2)**2
-      do k=1,100
-      dknum=k
-      call functionKc(a11,a22,SS,Delta,dknum,v)
-      write(30,*) dknum,v
-      enddo
       call functionKc(a11,a22,SS,Delta,dkc0(1),v)
 
       write(6,*) '-----------------------------------------------------'
@@ -205,12 +183,8 @@
 !     .(a11**2*(SS+a22)))**0.5
 
       write(6,*) '-----------------------------------------------------'
-      do i=1,40
-      write(40,*) i,aa*i**3+bb*i**2+cc*i+dd,cc*i+dd
-      write(40,*) -i,aa*(-i)**3+bb*(-i)**2+cc*(-i)+dd,cc*(-i)+dd
-      enddo
+
       i=0
-      write(40,*) -i,aa*(-i)**3+bb*(-i)**2+cc*(-i)+dd,cc*(-i)+dd
       return
 
       end
@@ -480,7 +454,6 @@ c     *****************************************************************
       call fnullcline2(ii,dflux,gamma,ro1,ro2)
 !     saves in ro2 such that dtro=0 for that gamma
 !     saves in ro1 such that dtgamma=0 for that gamma
-      write(13,*) gamma,ro1,ro2
 
       gammanullc(k)=gamma
 
@@ -495,7 +468,7 @@ c     *****************************************************************
 
       call fnullcline2(ii,dflux,gamma,ro1,ro2)
 
-      write(13,*) gamma,ro1,ro2
+
       gammanullc(k)=gamma
       ro1nullc(k)=ro1
       ro2nullc(k)=ro2
@@ -508,7 +481,7 @@ c     *****************************************************************
 
       call fnullcline2(ii,dflux,gamma,ro1,ro2)
 
-      write(13,*) gamma,ro1,ro2
+
       gammanullc(k)=gamma
       ro1nullc(k)=ro1
       ro2nullc(k)=ro2
@@ -605,9 +578,9 @@ c     *****************************************************************
      . /((1+gamma01)**3*(dlambda2+Y0**2)**2)
       vv=s1*s22*(dM*(ro-ro01)+dN*(gamma-gamma01))-(gamma-gamma01)
       if (vnew .lt. 0) then
-      write(200,*) gamma,ro,-1
+
       else
-       write(200,*) gamma,ro,1
+
       endif
       if ( i .gt. 1) then
             if (v*vnew .lt. 0.d0) then
@@ -624,9 +597,9 @@ c     *****************************************************************
 
       vnew=(s1*s22*Phi-(1+dtanh(x))/2*gamma)/depsilon+dflux
       if (vnew .lt. 0) then
-      write(200,*) gamma,ro,-1
+
       else
-       write(200,*) gamma,ro,1
+
       endif
       if ( i .gt. 1) then
             if (v*vnew .lt. 0.d0) then
@@ -644,9 +617,9 @@ c     *****************************************************************
 
       vnew=(s1*s22*Phi-(1+dtanh(x))/2*gamma)/depsilon+dflux
       if (vnew .lt. 0) then
-      write(200,*) gamma,ro,-1
+
       else
-       write(200,*) gamma,ro,1
+
       endif
       if ( i .gt. 1) then
             if (v*vnew .lt. 0.d0) then
@@ -655,7 +628,7 @@ c     *****************************************************************
       endif
       v=vnew
       enddo
-      write(200,*)
+
 
       return
       end

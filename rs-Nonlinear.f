@@ -1,4 +1,4 @@
-      subroutine rs(t,Nx,Ny,gamma,ro,gammaprime,roprime)
+      subroutine rs(t,Nx,Ny,gamma,ro,gammaprime,roprime,vdx)
       
       implicit double precision (a-h, o-z)
       common /const/ dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
@@ -6,29 +6,32 @@
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
       double precision gamma(Nx,Ny),ro(Nx,Ny)
       double precision gammaprime(Nx,Ny),roprime(Nx,Ny)
-      double precision f1(Nx,Ny),f2(Nx,Ny)
-      double precision Phi(Nx,Ny),gLaplace(Nx,Ny)
+      double precision gLaplace(Nx,Ny)
       double precision xgradeC(Nx,Ny),ygradeC(Nx,Ny)
-      double precision vdx(Nx,Ny),vdy(Nx,Ny)
+      double precision vdx(Nx,Ny)
       common /param/ gamma01,ro01
 
 
-      call function1(t,Nx,Ny,gamma,ro,f1,f2,Phi)
       call functionLap(Nx,Ny,gamma,gLaplace,xgradeC,ygradeC)
-      call flow(t,Nx,Ny,vdx,vdy)
 
 
-      do i=1,Nx
-       do j=1,Ny
+
+      do j=1,Ny
+       do i=1,Nx
 
        if (i .gt. 100) then
-        roprime(i,j)=-f1(i,j)*ro(i,j)+f2(i,j)*(1.d0-ro(i,j))
+               aux=gamma(i,j)
+        f1=(1.d0+dk*aux)/(1.d0+aux)
+        f2=(dL1+dk*dL2*dc*aux)/(1.d0+dc*aux)
+        Y=ro(i,j)*aux/(1.d0+aux)
+        Phi=(dlambda1+Y**2)/(dlambda2+Y**2)
+        roprime(i,j)=-f1*ro(i,j)+f2*(1.d0-ro(i,j))
         if (t .ge. tE) then
-            gammaprime(i,j)=1.d0/depsilon*(s1*s2*Phi(i,j)-gamma(i,j))
+            gammaprime(i,j)=1.d0/depsilon*(s1*s2*Phi-aux)
      .                  +depsilon*gLaplace(i,j)-
-     .            (vdx(i,j)*xgradeC(i,j)+vdy(i,j)*ygradeC(i,j))
+     .            (vdx(i,j)*xgradeC(i,j))
         else
-            gammaprime(i,j)=1.d0/depsilon*(s1*s2*Phi(i,j)-gamma(i,j))
+            gammaprime(i,j)=1.d0/depsilon*(s1*s2*Phi-aux)
      .                  +depsilon*gLaplace(i,j)
         endif
 
@@ -36,7 +39,7 @@
         roprime(i,j)=0.d0
         if (t .ge. tE) then
             gammaprime(i,j)=depsilon*gLaplace(i,j)
-     .            -(vdx(i,j)*xgradeC(i,j)+vdy(i,j)*ygradeC(i,j))
+     .            -(vdx(i,j)*xgradeC(i,j))
         else
             gammaprime(i,j)=depsilon*gLaplace(i,j)
         endif
@@ -48,28 +51,6 @@
 
       return
 
-      end
-!     ***********************************************************
-      subroutine function1(t,Nx,Ny,gamma,ro,f1,f2,Phi)
-
-      implicit double precision (a-h, o-z)
-      common /const/ dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
-     .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
-     .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
-      double precision gamma(Nx,Ny),ro(Nx,Ny)
-      double precision f1(Nx,Ny),f2(Nx,Ny),Phi(Nx,Ny)
-      common /param/ gamma01,ro01
-
-      do i=1,Nx
-       do j=1,Ny
-        f1(i,j)=(1.d0+dk*gamma(i,j))/(1.d0+gamma(i,j))
-        f2(i,j)=(dL1+dk*dL2*dc*gamma(i,j))/(1.d0+dc*gamma(i,j))
-        Y=ro(i,j)*gamma(i,j)/(1.d0+gamma(i,j))
-        Phi(i,j)=(dlambda1+Y**2)/(dlambda2+Y**2)
-       enddo
-      enddo
-
-      return
       end
 
 !      ***********************************************************
@@ -85,8 +66,8 @@
       common /param/ gamma01,ro01
 
 
-      do i=1,Nx
-       do j=1,Ny
+      do j=1,Ny
+       do i=1,Nx
 !       No-Flux boundary condition
        if(i .eq. 1) then
         gammaim2=gamma(i+1,j)
@@ -154,22 +135,23 @@
       return
       end
 !     ******************************************************************
-      subroutine flow(t,Nx,Ny,vdx,vdy)
+      subroutine flow(t,Nx,Ny,vdx)
 
       implicit double precision (a-h, o-z)
       common /const/ dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
       double precision vdx(Nx,Ny),vdy(Nx,Ny)
+      double precision meanflow(Nx,Ny),parab(Nx,Ny)
       common /param/ gamma01,ro01
 
 
 
 !     %%%%%%%%%%%%%%%%parabolic flow
-!      do i=1,Nx
-!       do j=1,Ny
+!      do j=1,Ny
+!       do i=1,Nx
 !
-!      vdx(i,j)=vd*
+!      parab(i,j)=vd*
 !     . (1.d0-(j-1-(Ny-1.d0)/2)**2/((Ny-1.d0)/2)**2)
 !        vdy(i,j)=0
 !       enddo
@@ -402,6 +384,12 @@
         enddo
 
       endif
+
+!        do j=1,Ny
+!            do i=1,Nx
+!                meanflow(i,j)=0.5*vdx(i,j)+0.5*parab(i,j)
+!            enddo
+!        enddo
 
       return
       end

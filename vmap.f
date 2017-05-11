@@ -12,9 +12,9 @@
       integer ier,pgbeg
       character(len=30) ct
 
-      do i=1,Nx
-       do j=1,Ny
-        gamma1(i,j)=gamma(i,j)
+      do j=1,Ny
+        do i=1,Nx
+            gamma1(i,j)=gamma(i,j)
 
        enddo
       enddo
@@ -91,8 +91,8 @@ c        draw labeled frame around viewport (XOPT, XTICK, NXSUB, YOPT, YTICK, NY
          gammamin = gamma1(1,1)
          gammamax = gamma1(1,1)
 
+        do j = 1,Ny
          do i = 1,Nx
-          do j = 1,Ny
              gammamin = min(gammamin,gamma1(i,j))
              gammamax = max(gammamax,gamma1(i,j))
            enddo
