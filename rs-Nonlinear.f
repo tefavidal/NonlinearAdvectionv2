@@ -1,6 +1,13 @@
       subroutine rs(t,Nx,Ny,gamma,ro,gammaprime,roprime,vdx)
       
-      implicit double precision (a-h, o-z)
+      implicit none
+
+      integer i, j, Nx, Ny
+      double precision t
+      double precision dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
+     .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
+     .               dx,dy, tol,isf,itstart,pi,amplit,prob,tpulse
+
       common /const/ dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
@@ -9,7 +16,7 @@
       double precision gLaplace(Nx,Ny)
       double precision xgradeC(Nx,Ny),ygradeC(Nx,Ny)
       double precision vdx(Nx,Ny)
-      common /param/ gamma01,ro01
+      double precision f1, f2, Y , Phi, aux
 
 
       call functionLap(Nx,Ny,gamma,gLaplace,xgradeC,ygradeC)
@@ -19,31 +26,22 @@
       do j=1,Ny
        do i=1,Nx
 
-       if (i .gt. 100) then
+!       if (i .gt. 100) then
                aux=gamma(i,j)
         f1=(1.d0+dk*aux)/(1.d0+aux)
         f2=(dL1+dk*dL2*dc*aux)/(1.d0+dc*aux)
         Y=ro(i,j)*aux/(1.d0+aux)
         Phi=(dlambda1+Y**2)/(dlambda2+Y**2)
+
         roprime(i,j)=-f1*ro(i,j)+f2*(1.d0-ro(i,j))
-        if (t .ge. tE) then
             gammaprime(i,j)=1.d0/depsilon*(s1*s2*Phi-aux)
      .                  +depsilon*gLaplace(i,j)-
      .            (vdx(i,j)*xgradeC(i,j))
-        else
-            gammaprime(i,j)=1.d0/depsilon*(s1*s2*Phi-aux)
-     .                  +depsilon*gLaplace(i,j)
-        endif
 
-       else
-        roprime(i,j)=0.d0
-        if (t .ge. tE) then
-            gammaprime(i,j)=depsilon*gLaplace(i,j)
-     .            -(vdx(i,j)*xgradeC(i,j))
-        else
-            gammaprime(i,j)=depsilon*gLaplace(i,j)
-        endif
-       endif
+!       else
+!            roprime(i,j)=0.d0
+!            gammaprime(i,j)=0.0
+!       endif
 
 
        enddo
@@ -57,13 +55,22 @@
 
       subroutine functionLap(Nx,Ny,gamma,gLaplace,xgradeC,ygradeC)
 
-      implicit double precision (a-h, o-z)
+      implicit none
+
+      double precision dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
+     .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
+     .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
+
       common /const/ dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
+      integer Nx, Ny, i, j
       double precision gamma(Nx,Ny)
       double precision gLaplace(Nx,Ny),xgradeC(Nx,Ny),ygradeC(Nx,Ny)
-      common /param/ gamma01,ro01
+      double precision thetai, thetaim1, psii, psiim1
+      double precision gammaim1, gammaim2, gammaip1
+      double precision gammajm1, gammajp1, gLapX, gLapY
+
 
 
       do j=1,Ny
@@ -127,7 +134,7 @@
 
 
         ygradeC(i,j)=(gammajp1-gammajm1)/(2*dy)
-!        xgradeC(i,j)=(gammaip1-gamma(i,j))/(dx)
+!        xgradeC(i,j)=(-gammaim1+gamma(i,j))/(dx)
 !        ygradeC(i,j)=(gammajp1-gamma(i,j))/(dy)
        enddo
       enddo
@@ -137,13 +144,18 @@
 !     ******************************************************************
       subroutine flow(t,Nx,Ny,vdx)
 
-      implicit double precision (a-h, o-z)
+      implicit none
+      double precision dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
+     .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
+     .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
+
       common /const/ dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
+      double precision t
+      integer Nx, Ny, i, j
       double precision vdx(Nx,Ny),vdy(Nx,Ny)
       double precision meanflow(Nx,Ny),parab(Nx,Ny)
-      common /param/ gamma01,ro01
 
 
 

@@ -11,7 +11,7 @@
       dimension dkmax(10), omega(10), wmax(10)
       common /param/ gamma01,ro01,Diffgamma,dke0,dk1
       double precision dke(Nx,Ny),dsigma(Nx,Ny)
-      double precision gammanullc(274),ro1nullc(274),ro2nullc(274)
+      double precision gammanullc(300),ro1nullc(300),ro2nullc(300)
       dimension dkc0(10)
 
       dflux=0.d0
@@ -27,38 +27,37 @@
 
       do i=1,Nx
        do j=1,Ny
-
-       if (i .lt. 110 .and. i .gt. 100) then
-            ro(i,j)=ro0(1)
-            gamma(i,j)=gamma0(1)+100*gamma0(1)
-       elseif(i .le. 100) then
-        ro(i,j)=0
-        gamma(i,j)=0
-       else
         ro(i,j)=ro0(1)
         gamma(i,j)=gamma0(1)
 
-       endif
-!         RANDOM CELL FIRING
-!         if (i .gt. 100) then
-!         ran=rand()
-!      if(ran .lt. 0.0001) then
-!
-!        gamma(i,j)=gamma0(1)+0.1
-!
-!
-!       else
-!
-!        gamma(i,j)=gamma0(1)
-!       endif
-!       ro(i,j)=ro0(1)
-!       else
-!       ro(i,j)=0
-!        gamma(i,j)=0
-!
-!       endif
        enddo
       enddo
+
+!%%%%%%%%%%% applying initial perturbation
+      do j=64,95
+!      do j=75,84
+!       do j=5,14
+         if(Nx .eq. 2000)then
+            do i=101,116
+!            do i=55,62
+               ro(i,j)=ro0(1)
+               gamma(i,j)=gamma0(1)+2
+            enddo
+         elseif(Nx .eq. 1000)then
+            do i=103,106
+               ro(i,j)=ro0(1)
+               gamma(i,j)=gamma0(1)+2
+            enddo
+         elseif(Nx .eq. 500)then
+            do i=202,203
+               ro(i,j)=ro0(1)
+               gamma(i,j)=gamma0(1)+2
+            enddo
+         endif
+      enddo
+
+
+
 
       do i = 1,1
          gamma01=gamma0(i)
@@ -197,7 +196,7 @@
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
 
-      common /param/ gamma01
+      common /param/ gamma01,ro01,Diffgamma,dke0,dk1
 
       dimension gamma0(10),ro0(10)
 !     Apliying the constrain dtro=0 looks for when dtgamma changes
@@ -333,7 +332,7 @@
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
 
-      common /param/ gamma01
+      common /param/ gamma01,ro01,Diffgamma,dke0,dk1
 
       x=(1.d0*ii-50.d0)/10
       s22=s2*(1+dtanh(x))/2
@@ -361,7 +360,7 @@
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
 
-      common /param/ gamma01
+      common /param/ gamma01,ro01,Diffgamma,dke0,dk1
 
       call function(ii,dflux,gamma1,ro1,v1)
       call function(ii,dflux,gamma2,ro2,v2)
@@ -442,8 +441,8 @@ c     *****************************************************************
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
 
-      common /param/ gamma01
-      double precision gammanullc(274),ro1nullc(274),ro2nullc(274)
+      common /param/ gamma01,ro01,Diffgamma,dke0,dk1
+      double precision gammanullc(300),ro1nullc(300),ro2nullc(300)
 
 
       k=1
@@ -503,7 +502,7 @@ c     *****************************************************************
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
 
-      common /param/ gamma01
+      common /param/ gamma01,ro01,Diffgamma,dke0,dk1
 
 
       f1=(1.d0+dk*gamma)/(1.d0+gamma)
@@ -527,7 +526,7 @@ c     *****************************************************************
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
 
-      common /param/ gamma01,ro01
+      common /param/ gamma01,ro01,Diffgamma,dke0,dk1
 
       x=(1.d0*ii-50.d0)/10
       s22=s2*(1+dtanh(x))/2

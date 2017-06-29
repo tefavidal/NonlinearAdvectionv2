@@ -1,13 +1,22 @@
       subroutine anfang(t,Nx,Ny,gamma,ro,gammanullc,ro1nullc,ro2nullc)
       
-      implicit double precision (a-h, o-z)
+      implicit none
+      double precision dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
+     .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
+     .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
       common /const/ dL1,dL2,dk,dc,dalpha,depsilon,depsilonp,
      .               dlambda1,dlambda2,s1,s2,vd,tend,tout,dt,tE,
      .               dx,dy,tol,isf,itstart,pi,amplit,prob,tpulse
 
-      double precision gamma(Nx,Ny),ro(Nx,Ny)
       common /param/ gamma01,ro01,Diffgamma,dke0,dk1
+      double precision gamma01,ro01,Diffgamma,dke0,dk1
+
+      double precision gamma(Nx,Ny),ro(Nx,Ny)
+      double precision t, depsilono, dh, dk2, dki, dKR, dkt, dlambda
+      double precision dq, dsigma0, dtheta, dtprime, tendprime
+      double precision tEprime, toutprime, tpulseprime, Vmax
       double precision gammanullc(300),ro1nullc(300),ro2nullc(300)
+      integer Nx, Ny
 
 
 
@@ -59,7 +68,8 @@
       ! good for paper 2 dimensional
       write(6,*) 'dimensionless xlength=',75*dk1/(dke0*Diffgamma)**0.5
       write(6,*) 'dimensionless ylength=',2*dk1/(dke0*Diffgamma)**0.5
-      dx=25.d0/Nx*dk1/(dke0*Diffgamma)**0.5
+!      dx=0.025*dk1/(dke0*Diffgamma)**0.5
+      dx=50.d0/Nx*dk1/(dke0*Diffgamma)**0.5
       dy=2.d0/Ny*dk1/(dke0*Diffgamma)**0.5
       write(6,*) 'Qqqqqqqqqq',(dke0*Diffgamma)**0.5/dk1
 !      write(6,*) 'dimensionless xlength=',75*dk1/(dke0*Diffgamma)**0.5

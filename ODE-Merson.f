@@ -96,7 +96,7 @@
       index=0
       do j=1,Ny
        do i=1,Nx
-        err=max(abs(g1(i,j)),abs(r1(i,j)))
+        err=max(abs(g1(i,j)),abs(r1(i,j)),err)
         if (gamma(i,j) .lt. 0.d0 .or. ro(i,j) .lt. 0.d0)then
             index=1
             exit
